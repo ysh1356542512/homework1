@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/newsunchoose"
+        android:icon="@drawable/newsunchoose"
+        android:title="@string/String"/>
+    <item
+        android:id="@+id/contactunchoose"
+        android:icon="@drawable/contactunchoose"
+        android:title="@string/contact" />
+    <item
+        android:id="@+id/watchunchoose"
+        android:icon="@drawable/watchunchoose"
+        android:title="@string/watch"/>
+    <item
+        android:id="@+id/dynaticunchoose"
+        android:icon="@drawable/dynaticunchoose"
+        android:title="@string/my"/>
+</menu>

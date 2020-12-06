@@ -1,0 +1,19 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="watch.watch1Fragment">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/Rv_watch1Hor"
+        android:layout_width="match_parent"
+        android:layout_height="110dp" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/Rv_watch1Lin"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+
+</LinearLayout>

@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">homework1</string>
     <string name="login">登录</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="textview">TextView</string>
+    <string name="String">消息</string>
+    <string name="contact">联系人</string>
+    <string name="watch">看点</string>
+    <string name="my">动态</string>
 </resources>
