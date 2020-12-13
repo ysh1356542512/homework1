@@ -80,7 +80,7 @@ public class watch1Fragment extends Fragment {
         Wh1data zjt1 = new Wh1data(R.drawable.watch1_zjt,R.drawable.watch1_lin_son,"周汉中","我是孙子","12","162");
         Wh1data pyx1 = new Wh1data(R.drawable.watch1_pyx,R.drawable.watch1_lin_daughter,"彭有新","我是孙女","17","239");
         Wh1data dk1 = new Wh1data(R.drawable.watch1_dk,R.drawable.watch1_lin_son,"代楷","我是孙子","40","1288");
-        Wh1data zx1 = new Wh1data(R.drawable.watch1_zx,R.drawable.watch1_lin_daughter,"张玺","我是孙女","1","1");
+        Wh1data zx1 = new Wh1data(R.drawable.watch1_zx,R.drawable.watch1_lin_daughter,"张玺","我是男同","1","1");
         Wh1data gq1 = new Wh1data(R.drawable.watch1_longge,R.drawable.watch1_lin_son,"泷歌","我是孙子","2","67");
         list1.add(ysh1);
         list1.add(zjt1);

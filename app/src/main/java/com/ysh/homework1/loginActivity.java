@@ -1,5 +1,6 @@
 package com.ysh.homework1;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -10,6 +11,8 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.view.View;
@@ -23,6 +26,18 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.HashMap;
 
 public class loginActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -100,26 +115,31 @@ public class loginActivity extends AppCompatActivity implements View.OnClickList
                 if(count==1) {
                     uerName = mEtLoginUsername.getText().toString().trim();
                     password = mEtLoginPassword.getText().toString().trim();
-                    String md5Psw = MD5Utils.md5(password);
-                    spPassword = readPsw(uerName);
-                    if (TextUtils.isEmpty(uerName)) {
-                        Toast.makeText(loginActivity.this, "请输入用户名", Toast.LENGTH_SHORT).show();
-                        return;
-                    } else if (TextUtils.isEmpty(password)) {
-                        Toast.makeText(loginActivity.this, "请输入密码", Toast.LENGTH_SHORT).show();
-                        return;
-                    } else if (md5Psw.equals(spPassword)) {
-                        Toast.makeText(loginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
-                        saveLoginStatus(true, uerName);
-                        startActivity(new Intent(this, MainActivity.class));
-                        finish();
-                    } else if ((spPassword != null && !TextUtils.isEmpty(spPassword) && !md5Psw.equals(spPassword))) {
-                        Toast.makeText(loginActivity.this, "输入的用户名和密码错误", Toast.LENGTH_SHORT).show();
-                        return;
-                    } else {
-                        Toast.makeText(loginActivity.this, "用户名不存在", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
+                    HashMap<String ,String> map = new HashMap<>();
+                    map.put("username",uerName);
+                    map.put("password",password);
+                    sendPostNetRequest("https://www.wanandroid.com/user/login",map);
+
+//                    String md5Psw = MD5Utils.md5(password);
+//                    spPassword = readPsw(uerName);
+//                    if (TextUtils.isEmpty(uerName)) {
+//                        Toast.makeText(loginActivity.this, "请输入用户名", Toast.LENGTH_SHORT).show();
+//                        return;
+//                    } else if (TextUtils.isEmpty(password)) {
+//                        Toast.makeText(loginActivity.this, "请输入密码", Toast.LENGTH_SHORT).show();
+//                        return;
+//                    } else if (md5Psw.equals(spPassword)) {
+//                        Toast.makeText(loginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
+//                        saveLoginStatus(true, uerName);
+//                        startActivity(new Intent(this, MainActivity.class));
+//                        finish();
+//                    } else if ((spPassword != null && !TextUtils.isEmpty(spPassword) && !md5Psw.equals(spPassword))) {
+//                        Toast.makeText(loginActivity.this, "输入的用户名和密码错误", Toast.LENGTH_SHORT).show();
+//                        return;
+//                    } else {
+//                        Toast.makeText(loginActivity.this, "用户名不存在", Toast.LENGTH_SHORT).show();
+//                        return;
+//                    }
                 } else {
                     Toast.makeText(loginActivity.this,"请勾选协议",Toast.LENGTH_SHORT).show();
                 }
@@ -178,6 +198,80 @@ public class loginActivity extends AppCompatActivity implements View.OnClickList
                     |View.SYSTEM_UI_FLAG_FULLSCREEN
                     |View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
             );
+        }
+    }
+    private void sendPostNetRequest(String mUrl, HashMap<String ,String> params){
+        MHandler mHandler = new MHandler();
+        new Thread(
+                () ->{
+                    try{
+                        URL url = new URL(mUrl);
+                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                        connection.setRequestMethod("POST");
+                        connection.setConnectTimeout(8000);
+                        connection.setReadTimeout(8000);
+                        connection.setDoOutput(true);
+                        connection.setDoInput(true);
+                        StringBuilder dataToWrite = new StringBuilder();
+                        for(String key:params.keySet()){
+                            dataToWrite.append(key).append("=").append(params.get(key)).append("&");
+                        }
+                        connection.connect();
+                        OutputStream outputStream = connection.getOutputStream();
+                        outputStream.write(dataToWrite.substring(0,dataToWrite.length() - 1).getBytes());
+                        InputStream in = connection.getInputStream();
+                        String responseData = StreamToString(in);
+                        Message message = new Message();
+                        message.obj = responseData;
+                        mHandler.sendMessage(message);
+                    } catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+        ).start();
+    }
+    private String StreamToString(InputStream in){
+        StringBuilder sb = new StringBuilder();
+        String oneLine;
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+        try {
+            while((oneLine = reader.readLine())!=null){
+                sb.append(oneLine).append("\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try{
+                in.close();
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+        return sb.toString();
+    }
+
+    private void parseJson(String response){
+        try{
+            JSONObject jsonObject = new JSONObject(response);
+            String IF = jsonObject.getString("errorCode");
+            if(IF.equals("-1")){
+                Toast.makeText(this,"登录失败",Toast.LENGTH_SHORT).show();
+            } else{
+                Toast.makeText(this,"登录成功",Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(loginActivity.this,jumpActivity.class));
+            }
+        } catch (JSONException e){
+            e.printStackTrace();
+        }
+    }
+
+    @SuppressLint("HandlerLeak")
+    private class MHandler extends Handler {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            String responseData = msg.obj.toString();
+            parseJson(responseData);
         }
     }
 }
