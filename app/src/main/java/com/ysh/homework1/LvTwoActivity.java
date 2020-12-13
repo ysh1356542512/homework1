@@ -41,7 +41,7 @@ public class LvTwoActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void initView(){
-        mBtnBack = findViewById(R.id.one_back);
+        mBtnBack = findViewById(R.id.two_back);
         mBtnBack.setOnClickListener(this);
         mRvData = findViewById(R.id.Rv_url);
         mRvData.setLayoutManager(new LinearLayoutManager(LvTwoActivity.this));
